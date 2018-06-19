@@ -1,0 +1,4 @@
+*.rdb
+*.log
+menu.txt
+/node_modules

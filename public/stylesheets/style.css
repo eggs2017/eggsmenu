@@ -1,0 +1,23 @@
+body {
+  padding: 50px;
+  font-family: 'Lato';
+  font-size: 22px;
+}
+
+.select_join select {
+
+  font-family: 'Lato';
+  font-size: 22px;
+
+}
+
+a {
+  color: #00B7FF;
+}
+
+
+#github {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+  }
