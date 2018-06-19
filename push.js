@@ -90,7 +90,7 @@ var io  = sio.listen(server);
               app.locals.items.forEach(function(element) {
                 if(element.nick === msg.paymentFor){
                   itemsToRemove.push(element);
-                  console.log("remove item " + element + " By: " + msg.approvedBy);
+                  console.log("remove item " + JSON.stringify(element) + " By: " + msg.approvedBy);
                 }
               });
 
