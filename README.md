@@ -1,4 +1,5 @@
 # eggsmenu
-table of orders
+Responsible table of orders
 
-To update node packages use instructions: https://expressjs.com/en/starter/generator.html 
+Require to do:
+To update node packages use instructions: https://expressjs.com/en/starter/generator.html
