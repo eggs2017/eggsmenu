@@ -75,6 +75,18 @@ var io  = sio.listen(server);
         });
 
 
+        function removeByIndex(array, index){
+            return array.filter(function(elem, _index){
+                return index != _index;
+            });
+        }
+
+        function removeByValue(array, value){
+            return array.filter(function(elem, _index){
+                return value != elem;
+            });
+        }
+
         socket.on("removePayment", function(msg) {
               let index =  app.locals.paymentTable.findIndex(function(element){
                 return element.paymentFor ===  msg.paymentFor;
@@ -82,7 +94,8 @@ var io  = sio.listen(server);
 
               //remove if exist
               if(index != -1){
-                app.locals.paymentTable.splice(index, 1);
+                console.log("remove index " + index + " item: " +  JSON.stringify(app.locals.paymentTable[index]));
+                app.locals.paymentTable = removeByIndex(app.locals.paymentTable, index);
               }
 
               //remove all items for it
@@ -90,12 +103,12 @@ var io  = sio.listen(server);
               app.locals.items.forEach(function(element) {
                 if(element.nick === msg.paymentFor){
                   itemsToRemove.push(element);
-                  console.log("remove item " + JSON.stringify(element) + " By: " + msg.approvedBy);
                 }
               });
 
               itemsToRemove.forEach(function(element) {
-                app.locals.items.splice(element ,1);
+                app.locals.items = removeByValue(app.locals.items, element);
+                console.log("remove item " + JSON.stringify(element) + " By: " + msg.approvedBy);
               });
 
               //Emit
