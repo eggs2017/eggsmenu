@@ -51,7 +51,7 @@ class AppComponent extends React.Component{
 
       render(){
             let nick = this.state.nick;
-            let shortNick = nick.substr(0, nick.indexOf("."));
+            let shortNick = nick;//nick.substr(0, nick.indexOf("."));
             return(
                 <div class="uk-container uk-container-small uk-position-relative">
 
@@ -165,7 +165,7 @@ class AppComponent extends React.Component{
                 <div class="uk-container">
                     <div class="uk-grid uk-margin" >
                         <div class="uk-width-auto"><legend class="uk-legend"></legend> </div>
-                        <div class="uk-width-3-5">
+                        <div class="uk-width-4-5">
                             <form>
                                 <select class="uk-select select_join" id="itemToAdd">
                                     {dishList}
@@ -203,6 +203,7 @@ class OrderGridComponent extends React.Component {
           var ordersTable = [];
           var sumOfSumValue = 0;
           var sumOfSumAmount = 0;
+          let index = 1;
           if(this.props.rows.length > 0){
               let namedArray = _.groupBy(this.props.rows, 'name');
 
@@ -213,6 +214,7 @@ class OrderGridComponent extends React.Component {
 
 
                 ordersTable.push(<tr>
+                        <td class="uk-text-center">{index++}</td>
                         <td>{key}</td>
                         <td class="uk-text-center">{sumAmount} szt</td>
                         <NickComponent rows={value} loggedNick={nick} others={false}/>
@@ -226,10 +228,11 @@ class OrderGridComponent extends React.Component {
 
           return (
              <div class="uk-section-small uk-section-muted">
-                 <table class="uk-table uk-table-small uk-table-justify">
+                 <table class="uk-table uk-table-small uk-table-justify uk-table-divider">
                       <thead>
-                          <tr>
-                              <th class="uk-text-center" >Danie</th>
+                          <tr >
+                              <th class="uk-text-center " >Lp.</th>
+                              <th class="uk-text-center " >Danie</th>
                               <th class="uk-text-center">Razem</th>
                               <th class="uk-text-center">Twoje zamówienia</th>
 
@@ -240,8 +243,9 @@ class OrderGridComponent extends React.Component {
                       </tbody>
                 </table>
 
-
+                <div class="uk-margin-medium-left">
                   <span class="uk-text-success">Suma kontrolna:</span> <span class="uk-badge uk-badge-notification">{parseFloat(sumOfSumValue).toFixed(2)} zł / {sumOfSumAmount} szt</span>
+                </div>
               </div>
           );
 
@@ -312,44 +316,49 @@ class PaymentGridComponent extends React.Component{
           sumTotalTable.push( {nick: key , sumTotal: sumTotal});
         });
 
+        let nick = this.state.nick;
+
         for(let row of sumTotalTable){
 
-            let nick = this.state.nick;
-            let shortNick = row.nick.substr(0, row.nick.indexOf(".")).toLowerCase();
-            //check is nick in payment ordersTable
-            let isInPayment = false;
-            let findElem = this.state.paymentStatus.find(function(element){
-              return element.paymentFor ===  row.nick;
-            });
 
-            if(findElem != undefined){
-              let shortApprovedBy = findElem.approvedBy.substr(0, findElem.approvedBy.indexOf(".")).toLowerCase();;
+                let shortNick = row.nick;//.substr(0, row.nick.indexOf(".")).toLowerCase();
+                let pictLink = "http://intranet.softsystem.pl/newhr/api/photo/get/"+shortNick.toLowerCase();
+                //check is nick in payment ordersTable
+                let isInPayment = false;
+                let findElem = this.state.paymentStatus.find(function(element){
+                  return element.paymentFor ===  row.nick;
+                });
 
-              paymentTable.push(<tr>
-                    <td class="uk-text-center">{shortNick}</td>
-                    <td class="uk-text-center"><code>{row.sumTotal} zł </code></td>
-                    <td class="uk-text-center">
-                        <button class="uk-button uk-button-primary uk-button-small" onClick= {() => this.removePaymentAction(nickLogged, row.nick)} >Usuń wszystko</button>
-                    </td>
-                    <td class="uk-text-center">{shortApprovedBy}  {findElem.sumTotal} zł</td>
-                  </tr>);
-            }
-            else {
-                paymentTable.push(<tr>
-                      <td class="uk-text-center">{shortNick}</td>
-                      <td class="uk-text-center"><code>{row.sumTotal} zł </code></td>
-                      <td class="uk-text-center">
-                          <button class="uk-button uk-button-primary uk-button-small" onClick= {() => this.doPaymentAction(nickLogged, row.nick, row.sumTotal)} ><code>Potwierdź wpłatę</code></button>
-                      </td>
-                      <td></td>
-                    </tr>);
-            }
+                // <div data-src="http://intranet.softsystem.pl/newhr/api/photo/get/{shortNick}"  uk-img></div>
+                //<img class="uk-preserve-width uk-border-circle" src="http://intranet.softsystem.pl/newhr/api/photo/get/mskocz" width="40" alt="">
+                if(findElem != undefined){
+                  let shortApprovedBy = findElem.approvedBy;//findElem.approvedBy.substr(0, findElem.approvedBy.indexOf(".")).toLowerCase();;
+
+                  paymentTable.push(<tr>
+                        <td class="uk-text-center"><img class="uk-preserve-width uk-border-circle" src={pictLink} width="40" alt=""></img>{shortNick}</td>
+                        <td class="uk-text-center"><code>{row.sumTotal} zł </code></td>
+                        <td class="uk-text-center">
+                            <button class="uk-button uk-button-primary uk-button-small" onClick= {() => this.removePaymentAction(nickLogged, row.nick)} >Usuń wszystko</button>
+                        </td>
+                        <td class="uk-text-center">{shortApprovedBy}  {findElem.sumTotal} zł</td>
+                      </tr>);
+                }
+                else {
+                    paymentTable.push(<tr>
+                          <td class="uk-text-center"><img class="uk-preserve-width uk-border-circle" src={pictLink} width="40" alt=""></img>{shortNick} </td>
+                          <td class="uk-text-center"><code>{row.sumTotal} zł </code></td>
+                          <td class="uk-text-center">
+                              <button class="uk-button uk-button-primary uk-button-small" onClick= {() => this.doPaymentAction(nickLogged, row.nick, row.sumTotal)} ><code>Potwierdź wpłatę</code></button>
+                          </td>
+                          <td></td>
+                        </tr>);
+                }
         }
     }
 
     return(
     <div class="uk-section-small uk-section-muted">
-        <table class="uk-table uk-table-small uk-table-justify">
+        <table class="uk-table uk-table-small uk-table-justify uk-table-divider">
              <thead>
                  <tr>
                      <th class="uk-text-center">Osoba</th>

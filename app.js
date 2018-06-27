@@ -11,6 +11,7 @@ var indexRouter = require('./routes/index');
 var ordersRouter = require('./routes/orders');
 var paymentsRouter = require('./routes/payments');
 var reserveNickRouter = require('./routes/reserveNick');
+var ldapRouter = require('./routes/ldap');
 var menuRouter = require('./routes/menu');
 var pushModule = require('./push');
 
@@ -70,6 +71,7 @@ app.use('/', indexRouter);
 app.use('/getOrders', ordersRouter);
 app.use('/getPayments', paymentsRouter);
 app.use('/reserveNick', reserveNickRouter);
+app.use('/ldap', ldapRouter);
 app.use('/getMenu', menuRouter);
 
 // catch 404 and forward to error handler
