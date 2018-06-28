@@ -104,7 +104,7 @@ router.get('/', function (req, res, next) {
 
                 res.send( JSON.stringify(
                                           { nick: nick,
-                                            person: vipPrefix + " " + outputResult.firstName + ", " + outputResult.lastName
+                                            person: vipPrefix + " " + outputResult.firstName + " " + outputResult.lastName
                                           } ));
               }
             );
