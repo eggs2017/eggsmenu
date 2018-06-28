@@ -7,7 +7,8 @@ class AppComponent extends React.Component{
 
          this.state = {
             items : [],
-            nick: ''
+            nick: undefined,
+            person : undefined
         };
     }
 
@@ -16,8 +17,7 @@ class AppComponent extends React.Component{
             .then((response) => response.json())
             .then((responseJson) => {
               let x =  responseJson;
-              this.setState({nick : x.nick});
-              //socket.emit('try register', x.nick);
+              this.setState({nick : x.nick, person : x.person});
 
             })
             .catch((error) => {
@@ -37,12 +37,10 @@ class AppComponent extends React.Component{
              });
 
             socket.on('update orders', (data) => {
-                // React will automatically rerender the component when a new message is added.
                 this.setState({ items: JSON.parse(data) });
               });
 
               socket.on('server exit', (data) => {
-                  // React will automatically rerender the component when a new message is added.
                   UIkit.notification("<span uk-icon='icon: warning'></span> Przykro mi - Serwer został wyłączony", { pos: 'bottom-center',  status:'danger'} );
                   this.setState({ items: [] });
                 });
@@ -51,11 +49,12 @@ class AppComponent extends React.Component{
 
       render(){
             let nick = this.state.nick;
-            let shortNick = nick;//nick.substr(0, nick.indexOf("."));
+            let person = this.state.person;
+            let shortNick = nick;
             return(
                 <div class="uk-container uk-container-small uk-position-relative">
 
-                    <span class="uk-label">Cześć: {shortNick} <code>u</code></span>
+                    <span class="uk-label">Cześć: {person}</span>
                     <div class="uk-flex-center uk-margin">
                       <hr class="uk-grid-divider"></hr>
                        <span class="uk-label">Wybierz danie</span>
@@ -70,10 +69,7 @@ class AppComponent extends React.Component{
                        <span class="uk-label">Kontroluj rozliczenie</span>
                        <PaymentGridComponent appInstance = {this} rows={this.state.items} />
 
-
                        <hr class="uk-grid-divider"></hr>
-
-
                     </div>
                 </div>
             );
@@ -94,10 +90,10 @@ class AppComponent extends React.Component{
       fetch('/getmenu')
        .then((response) => response.json())
        .then((responseJson) => {
-         //if(JSON.stringify(responseJson) !== JSON.stringify(this.state.items)){
+
             let orderedMenu = _.orderBy(responseJson, 'name');
             this.setState({items : orderedMenu});
-        //}
+
        })
        .catch((error) => {
          console.log(error);
@@ -127,6 +123,7 @@ class AppComponent extends React.Component{
         //detect duplicate
 
         let yourNick = this.props.appInstance.state.nick;
+        let person =  this.props.appInstance.state.person;
         const already = this.props.rows.filter((row) => row.name === selectedItem.attr('value') && row.nick === yourNick);
 
         let item;
@@ -137,6 +134,7 @@ class AppComponent extends React.Component{
                 name    : selectedItem.attr('value'),
                 val     : parseFloat(selectedItem.attr('price')),
                 nick    : yourNick,
+                person  : person,
                 amount : 1
               };
 
@@ -280,7 +278,6 @@ class PaymentGridComponent extends React.Component{
 
 
     socket.on('update payment', (data) => {
-      // React will automatically rerender the component when a new message is added.
       this.setState({ paymentStatus: JSON.parse(data) });
     });
   }
@@ -300,7 +297,6 @@ class PaymentGridComponent extends React.Component{
 
     let nickLogged = this.props.appInstance.state.nick;
 
-
     var paymentTable = [];
     var sumOfValue = 0;
 
@@ -309,19 +305,17 @@ class PaymentGridComponent extends React.Component{
     if(this.props.rows.length > 0){
         let namedArray = _.groupBy(this.props.rows, 'nick');
 
-        //due to problem with lodash forEach and react.
         let sumTotalTable = [];
         _.forEach(namedArray, function(value, key) {
           let sumTotal = _.sumBy(value, function(o) { return o.val * o.amount; });
-          sumTotalTable.push( {nick: key , sumTotal: sumTotal});
+          sumTotalTable.push( {nick: key , person: value[0].person,  sumTotal: sumTotal});
         });
 
         let nick = this.state.nick;
 
         for(let row of sumTotalTable){
-
-
-                let shortNick = row.nick;//.substr(0, row.nick.indexOf(".")).toLowerCase();
+                let shortNick = row.nick;
+                let person = row.person;
                 let pictLink = "http://intranet.softsystem.pl/newhr/api/photo/get/"+shortNick.toLowerCase();
                 //check is nick in payment ordersTable
                 let isInPayment = false;
@@ -329,13 +323,12 @@ class PaymentGridComponent extends React.Component{
                   return element.paymentFor ===  row.nick;
                 });
 
-                // <div data-src="http://intranet.softsystem.pl/newhr/api/photo/get/{shortNick}"  uk-img></div>
-                //<img class="uk-preserve-width uk-border-circle" src="http://intranet.softsystem.pl/newhr/api/photo/get/mskocz" width="40" alt="">
                 if(findElem != undefined){
-                  let shortApprovedBy = findElem.approvedBy;//findElem.approvedBy.substr(0, findElem.approvedBy.indexOf(".")).toLowerCase();;
+                  let shortApprovedBy = findElem.approvedBy;
 
                   paymentTable.push(<tr>
-                        <td class="uk-text-center"><img class="uk-preserve-width uk-border-circle" src={pictLink} width="40" alt=""></img>{shortNick}</td>
+                        <td class="uk-text-center"><img class="uk-preserve-width uk-border-circle" src={pictLink} width="40" alt=""></img></td>
+                        <td class="uk-text-center">{person}</td>
                         <td class="uk-text-center"><code>{row.sumTotal} zł </code></td>
                         <td class="uk-text-center">
                             <button class="uk-button uk-button-primary uk-button-small" onClick= {() => this.removePaymentAction(nickLogged, row.nick)} >Usuń wszystko</button>
@@ -345,7 +338,8 @@ class PaymentGridComponent extends React.Component{
                 }
                 else {
                     paymentTable.push(<tr>
-                          <td class="uk-text-center"><img class="uk-preserve-width uk-border-circle" src={pictLink} width="40" alt=""></img>{shortNick} </td>
+                          <td class="uk-text-center"><img class="uk-preserve-width uk-border-circle" src={pictLink} width="40" alt=""></img></td>
+                          <td class="uk-text-center">{person}</td>
                           <td class="uk-text-center"><code>{row.sumTotal} zł </code></td>
                           <td class="uk-text-center">
                               <button class="uk-button uk-button-primary uk-button-small" onClick= {() => this.doPaymentAction(nickLogged, row.nick, row.sumTotal)} ><code>Potwierdź wpłatę</code></button>
@@ -361,7 +355,8 @@ class PaymentGridComponent extends React.Component{
         <table class="uk-table uk-table-small uk-table-justify uk-table-divider">
              <thead>
                  <tr>
-                     <th class="uk-text-center">Osoba</th>
+                     <th class="uk-text-center"></th>
+                     <th class="uk-text-left">Osoba</th>
                      <th class="uk-text-center">Razem</th>
                      <th class="uk-text-center">Płatność</th>
                      <th class="uk-text-center">Zatwierdził</th>
@@ -388,13 +383,11 @@ class NickComponent extends React.Component {
           //put logged user first
           let filtered = _.filter(sortedRows, { 'nick': nick });
           for(let row of filtered){
-              //table.push(<button  class="uk-button-small " uk-icon="icon: trash" type="button"  onClick= {() => this.removeOrder(row.id, row.nick)} > {row.amount} szt</button>);
               table.push(<span class="uk-badge uk-badge-notification"> {row.amount} szt</span>);
           }
 
         return(
               <td class="uk-text-center">{table}</td>
-              //<td><span class="uk-badge uk-badge-notification"></span></td>
         );
     }
 }
