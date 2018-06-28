@@ -317,6 +317,7 @@ class PaymentGridComponent extends React.Component{
                 let shortNick = row.nick;
                 let person = row.person;
                 let pictLink = "http://172.29.1.105/newhr/api/photo/get/"+shortNick.toLowerCase();
+
                 //check is nick in payment ordersTable
                 let isInPayment = false;
                 let findElem = this.state.paymentStatus.find(function(element){
