@@ -30,10 +30,7 @@ router.get('/', function (req, res, next) {
 
       host = host.toLowerCase();
       //remove pc, remove - rest
-      let pcSuff = "pc";
-
-      if(host.indexOf(pcSuff) == 0 && host.substring(0,2) === pcSuff){
-
+    
         //remove pc
         host = host.substring(2, host.length);
 
@@ -108,7 +105,7 @@ router.get('/', function (req, res, next) {
                                           } ));
               }
             );
-      }
+
     });
   });
 

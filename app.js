@@ -56,7 +56,7 @@ try {
       let index2 = element.length - 1;
       let price = element.substr(index1,  index2);
       if(element !== undefined && element.length > 0){
-        app.locals.menuTable.push( { name: element + ' zł', val: parseFloat(price.trim()).toFixed(2) });
+        app.locals.menuTable.push( { name: element + '', val: parseFloat(price.trim()).toFixed(2) });
         console.log(" add element to menu: *" + element + "*");
       }
     });
