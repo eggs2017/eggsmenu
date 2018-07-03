@@ -57,7 +57,7 @@ class AppComponent extends React.Component{
                     <span class="uk-label">Cześć: {person}</span>
                     <div class="uk-flex-center uk-margin">
                       <hr class="uk-grid-divider"></hr>
-                       <span class="uk-label">Wybierz danie</span>
+                       <span class="uk-label">Wybierz danie Bistro Chaty</span>
                        <OrderListComponent appInstance = {this} rows={this.state.items}/>
 
                        <hr class="uk-grid-divider"></hr>
@@ -330,7 +330,7 @@ class PaymentGridComponent extends React.Component{
                   paymentTable.push(<tr>
                         <td class="uk-text-center"><img class="uk-preserve-width uk-border-circle" src={pictLink} width="40" alt=""></img></td>
                         <td class="uk-text-left">{person}</td>
-                        <td class="uk-text-center"><code>{row.sumTotal} zł </code></td>
+                        <td class="uk-text-center">{row.sumTotal} zł</td>
                         <td class="uk-text-center">
                             <button class="uk-button uk-button-primary uk-button-small" onClick= {() => this.removePaymentAction(nickLogged, row.nick)} >Usuń wszystko</button>
                         </td>
@@ -341,7 +341,7 @@ class PaymentGridComponent extends React.Component{
                     paymentTable.push(<tr>
                           <td class="uk-text-center"><img class="uk-preserve-width uk-border-circle" src={pictLink} width="40" alt=""></img></td>
                           <td class="uk-text-left">{person}</td>
-                          <td class="uk-text-center"><code>{row.sumTotal} zł </code></td>
+                          <td class="uk-text-center">{row.sumTotal} zł</td>
                           <td class="uk-text-center">
                               <button class="uk-button uk-button-primary uk-button-small" onClick= {() => this.doPaymentAction(nickLogged, row.nick, row.sumTotal)} ><code>Potwierdź wpłatę</code></button>
                           </td>
