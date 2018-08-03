@@ -8,7 +8,7 @@ var fs = require('fs')
 var compression = require('compression')
 
 
-logger = winston.createLogger(
+var logger = winston.createLogger(
   {
     level: 'info',
     format: winston.format.json(),
@@ -23,6 +23,7 @@ logger = winston.createLogger(
   }
 )
 
+module.exports = logger;
 
 var indexRouter     = require('./routes/index')
 var ordersRouter    = require('./routes/orders')
