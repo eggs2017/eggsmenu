@@ -19,7 +19,7 @@ router.get('/', function (req, res, next) {
     let nick = '';
     let domain = '';
 
-    console.log("remote address is " + req.connection.remoteAddress);
+    logger.info("remote address is " + req.connection.remoteAddress);
     dns.lookupService(req.connection.remoteAddress, 22, (err, hostname, service) => {
       let host ='';
       if(hostname !== undefined)
@@ -30,7 +30,7 @@ router.get('/', function (req, res, next) {
 
       host = host.toLowerCase();
       //remove pc, remove - rest
-    
+
         //remove pc
         host = host.substring(2, host.length);
 
@@ -48,7 +48,7 @@ router.get('/', function (req, res, next) {
           let domain1 = domain.substring(0, domain.indexOf(".") );
           let domain2 = domain.substring(domain.indexOf(".")+1);
 
-          console.log("nick: " + nick, "host: " + host, "domain: " + domain, "domain1: " + domain1 , "domain2: " + domain2);
+          logger.info("nick: " + nick +  " host: " + host +  " domain: " + domain +  " domain1: " + domain1 +  " domain: " + domain2);
 
           let cn = nick;
           let dc1 =  domain1;
@@ -91,7 +91,7 @@ router.get('/', function (req, res, next) {
             )
             .catch(function (error) {
                 // Handle any error from all above steps
-                console.log('Error outputResult' , error);
+                logger.error('Error outputResult' + error);
             })
             .done( function D(outputResult){
                 let vipPerson =  findByPerson(vipName, nick);

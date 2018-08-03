@@ -10,7 +10,7 @@ var io  = sio.listen(server);
       //send message to user
       socket.on("add order", function(msg) {
 
-              console.log("send message msg body: " + msg.body + " msg sender: " + msg.sender );
+              logger.info("send message msg body: " + msg.body + " msg sender: " + msg.sender );
 
               let item = JSON.parse(msg.body);
 
@@ -24,11 +24,11 @@ var io  = sio.listen(server);
 
               if(existsItem != undefined ){
                 existsItem.amount = item.amount
-                console.log("^update item: " + existsItem.id);
+                logger.info("^update item: " + existsItem.id);
               }
               else{
                   app.locals.items.push(item);
-                  console.log("**insert item: " + item.id);
+                  logger.info("**insert item: " + item.id);
               }
               io.sockets.emit("update orders",  JSON.stringify(app.locals.items));
 
@@ -43,11 +43,11 @@ var io  = sio.listen(server);
               });
 
               if(index != -1){
-                console.log("remove at index " + index );
+                logger.info("remove at index " + index );
                 app.locals.items.splice(index, 1);
               }
 
-              console.log("rest of items " + JSON.stringify(app.locals.items) );
+              logger.info("rest of items " + JSON.stringify(app.locals.items) );
 
               //Emit
               io.sockets.emit("update orders", JSON.stringify(app.locals.items));
@@ -69,7 +69,7 @@ var io  = sio.listen(server);
 
             //insert
             app.locals.paymentTable.push(msg);
-            console.log("payment items " + JSON.stringify(app.locals.paymentTable) );
+            logger.info("payment items " + JSON.stringify(app.locals.paymentTable) );
 
             io.sockets.emit("update payment", JSON.stringify(app.locals.paymentTable));
         });
@@ -94,7 +94,7 @@ var io  = sio.listen(server);
 
               //remove if exist
               if(index != -1){
-                console.log("remove index " + index + " item: " +  JSON.stringify(app.locals.paymentTable[index]));
+                logger.info("remove index " + index + " item: " +  JSON.stringify(app.locals.paymentTable[index]));
                 app.locals.paymentTable = removeByIndex(app.locals.paymentTable, index);
               }
 
@@ -108,7 +108,7 @@ var io  = sio.listen(server);
 
               itemsToRemove.forEach(function(element) {
                 app.locals.items = removeByValue(app.locals.items, element);
-                console.log("remove item " + JSON.stringify(element) + " By: " + msg.approvedBy);
+                logger.info("remove item " + JSON.stringify(element) + " By: " + msg.approvedBy);
               });
 
               //Emit

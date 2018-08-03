@@ -6,7 +6,7 @@ var path = require("path");
 router.get('/', function(req, res, next) {
   //res.render('index', { title: 'Express' });
     res.sendFile( path.join(__dirname, '../views', 'react_index.html'));
-    console.log("REQ:: "+req.headers.host);
+    logger.info("REQ:: "+req.headers.host);
 });
 
 module.exports = router;

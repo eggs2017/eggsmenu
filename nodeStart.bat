@@ -1,1 +1,1 @@
-start node app.js
+node app.js

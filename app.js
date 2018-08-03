@@ -1,33 +1,62 @@
-var createError = require('http-errors');
-var express = require('express');
-var path = require('path');
-var cookieParser = require('cookie-parser');
-var logger = require('morgan');
+var createError = require('http-errors')
+var express = require('express')
+var path = require('path')
+var cookieParser = require('cookie-parser')
+var morgan = require('morgan')
+var winston = require('winston')
 var fs = require('fs')
+var compression = require('compression')
+
+
+logger = winston.createLogger(
+  {
+    level: 'info',
+    format: winston.format.json(),
+    transports: [
+      //
+      // - Write to all logs with level `info` and below to `combined.log`
+      // - Write all logs error (and below) to `error.log`.
+      //
+      new winston.transports.File({ filename: 'logs/error.log', level: 'error' }),
+      new winston.transports.File({ filename: 'logs/combined.log' })
+    ]
+  }
+)
+
+
+var indexRouter     = require('./routes/index')
+var ordersRouter    = require('./routes/orders')
+var paymentsRouter  = require('./routes/payments')
+var reserveNickRouter = require('./routes/reserveNick')
+var ldapRouter = require('./routes/ldap')
+var menuRouter = require('./routes/menu')
+var pushModule = require('./push')
+
+var app = express()
 
 
 
-var indexRouter = require('./routes/index');
-var ordersRouter = require('./routes/orders');
-var paymentsRouter = require('./routes/payments');
-var reserveNickRouter = require('./routes/reserveNick');
-var ldapRouter = require('./routes/ldap');
-var menuRouter = require('./routes/menu');
-var pushModule = require('./push');
+app.use(compression({
+        //threshold: 15,
+        filter: function(req,res) {
+            logger.info("Compression...");
+            return compression.filter(req, res);
+        }
+    }));
 
-var app = express();
 
 //http logs
 // create a write stream (in append mode)
-var accessLogStream = fs.createWriteStream(path.join(__dirname, 'access.log'), {flags: 'a'})
 // setup the logger
-app.use(logger('combined', {stream: accessLogStream}));
+app.use(morgan('combined', {
+  stream: fs.createWriteStream(path.join(__dirname, 'logs/access.log'), {flags: 'a'})
+}));
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'pug');
 
-app.use(logger('dev'));
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
@@ -57,13 +86,13 @@ try {
       let price = element.substr(index1,  index2);
       if(element !== undefined && element.length > 0){
         app.locals.menuTable.push( { name: element + '', val: parseFloat(price.trim()).toFixed(2) });
-        console.log(" add element to menu: *" + element + "*");
+        logger.info(" add element to menu: *" + element + "*");
       }
     });
     //console.log(app.locals.menuTable);
 
 } catch(e) {
-    console.log('Error:', e.stack);
+    logger.error('Error:' +  e.stack);
 }
 
 
@@ -92,19 +121,18 @@ app.use(function(err, req, res, next) {
 
 var server = require('http').createServer(app);
 
-var io  = pushModule.pushMethods(server,  app);
+var pushModuleBlock  = pushModule.pushMethods(server,  app);
 
-server.listen(/*3602*/ process.env.PORT || 8080, () => console.log("all is ok!"));
-logger ('server listen');
+server.listen(/*3602*/ process.env.PORT || 8080, () => logger.info("all is ok!"));
 
 process.stdin.resume();
 
 process.on('SIGINT', () => {
-  console.log('Received SIGINT.');
+  logger.info('Received SIGINT.');
 
   app.locals.items = [];
-  io.sockets.emit("server exit");
-  console.log('Exit of server');
+  pushModuleBlock.sockets.emit("server exit");
+  logger.info('Exit of server');
   process.exit(1);
 });
 

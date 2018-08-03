@@ -20,7 +20,7 @@ router.get('/:cn/:dc1/:dc2', function (req, res, next) {
   Q.fcall( function( myObject ){
         var deferred = Q.defer();
         client.bind('', '', function (err) {
-          console.log("*STEP");
+
           deferred.resolve( client );
         })
         return deferred.promise;
@@ -30,10 +30,10 @@ router.get('/:cn/:dc1/:dc2', function (req, res, next) {
         var deferred = Q.defer();
 
           client.search(param, options, function (err, searchParam) {
-              console.log("**STEP 1 ");
+
               search  = searchParam;
               deferred.resolve( search );
-              console.log("**STEP 1A");
+
           })
           return deferred.promise;
         }
@@ -41,22 +41,22 @@ router.get('/:cn/:dc1/:dc2', function (req, res, next) {
     .then(function( search ){
         var deferred = Q.defer();
         search.on('searchEntry', function(entry) {
-          console.log("***STEP 2 ");
-          console.log('entry object: ' + JSON.stringify(entry.object));
+
+
           outputResult = { firstName: entry.object.givenName, lastName: entry.object.sn};
           deferred.resolve( outputResult );
-          console.log("***STEP 2A");
+
         })
         return deferred.promise;
       }
     )
     .catch(function (error) {
         // Handle any error from all above steps
-        console.log('Error outputResult' , error);
+        logger.error('Error outputResult' , error);
     })
     .done( function D(outputResult){
-        console.log("**** STEP 3");
-        console.log('outputResult', outputResult);
+
+        logger.info('outputResult', outputResult);
         res.send(outputResult);
       }
     );
