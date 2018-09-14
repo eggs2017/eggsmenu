@@ -1,6 +1,7 @@
 var express = require('express');
 var router = express.Router();
 const dns = require('dns');
+var logger = require('../libs/logger')
 
 const ldap = require('ldapjs');
 var Q = require('q');

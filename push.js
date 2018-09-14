@@ -1,6 +1,7 @@
 exports.pushMethods = function(server, app){
 
 var sio     = require("socket.io");
+var logger = require('./libs/logger')
 
 var io  = sio.listen(server);
 
