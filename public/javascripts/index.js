@@ -57,7 +57,7 @@ class AppComponent extends React.Component{
                     <span class="uk-label">Cześć: {person}</span>
                     <div class="uk-flex-center uk-margin">
                       <hr class="uk-grid-divider"></hr>
-                       <span class="uk-label">Wybierz danie Bistro Chaty</span>
+                       <span class="uk-label">Wybierz danie</span>
                        <OrderListComponent appInstance = {this} rows={this.state.items}/>
 
                        <hr class="uk-grid-divider"></hr>
