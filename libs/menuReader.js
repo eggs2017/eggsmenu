@@ -13,7 +13,8 @@ try {
     Dish2(every day different) - 1.50 $,
     ...
    */
-    var menu = fs.readFileSync(path.join(__dirname ,   '../menu/menu1.txt'), 'utf8');
+    //var menu = fs.readFileSync(path.join(__dirname ,   '../menu/menu1.txt'), 'utf8');
+    var menu = fs.readFileSync(path.join(__dirname ,   '../menu/kolorado.txt'), 'utf8');
     let arr = menu.split('zł,');
 
 
