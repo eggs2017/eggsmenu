@@ -123,8 +123,8 @@ router.get('/', function (req, res, next) {
 
             Promise.all(
             [
-                bindClient('ldap://ldap:389'),
-                prepareDns(req.connection.remoteAddress ,22),
+                bindClient('ldap://ldap:389'),//prepare ldap client
+                prepareDns(req.connection.remoteAddress ,22), //get nick and params to ask ldap
             ])
             .then(resp => searchUser(resp[0], resp[1].param))
             .then(ret => searchEntry(ret))
