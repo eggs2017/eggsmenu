@@ -1,23 +1,23 @@
-var createError = require('http-errors')
-var express = require('express')
-var path = require('path')
-var cookieParser = require('cookie-parser')
-var morgan = require('morgan')
-var fs = require('fs')
+var createError = require('http-errors');
+var express = require('express');
+var path = require('path');
+var cookieParser = require('cookie-parser');
+var morgan = require('morgan');
+var fs = require('fs');
 
-var logger = require('./libs/logger')
-var menuTable = require('./libs/menuReader')
-var compression = require('compression')
+var logger = require('./libs/logger');
+var menuTable = require('./libs/menuReader');
+var compression = require('compression');
 
-var indexRouter     = require('./routes/index')
-var ordersRouter    = require('./routes/orders')
-var paymentsRouter  = require('./routes/payments')
-var reserveNickRouter = require('./routes/reserveNick')
-var ldapRouter = require('./routes/ldap')
-var menuRouter = require('./routes/menu')
-var pushModule = require('./push')
+var indexRouter     = require('./routes/index');
+var ordersRouter    = require('./routes/orders');
+var paymentsRouter  = require('./routes/payments');
+var reserveNickRouter = require('./routes/reserveNick');
+var ldapRouter = require('./routes/ldap');
+var menuRouter = require('./routes/menu');
+var pushModule = require('./push');
 
-var app = express()
+var app = express();
 
 app.use(compression({
         //threshold: 15,
