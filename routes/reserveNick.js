@@ -1,3 +1,5 @@
+
+
 var express = require('express');
 var router = express.Router();
 const dns = require('dns');
@@ -72,7 +74,7 @@ router.get('/', function (req, res, next) {
                                   + ",dc=" + dc2;
 
 
-                        resolve( {nick : this.nick, param : param } );
+                      resolve( {nick : this.nick, param : param } );
                   }
 
               });
@@ -127,7 +129,16 @@ router.get('/', function (req, res, next) {
                 prepareDns(req.connection.remoteAddress ,22), //get nick and params to ask ldap
             ])
             .then(resp => searchUser(resp[0], resp[1].param))
-            .then(ret => searchEntry(ret))
+			
+            .then(ret => {searchEntry(ret)}).catch( err=>{
+				console.error(err)
+				var vip = vipName[0]
+							res.send( JSON.stringify(
+                                { nick: vip.name,
+                                  person: vip.prefix + " " + vip.name
+                                } )
+                              );
+			})
             .then(ret => {
                   let vipPerson =  findByPerson(vipName, this.nick);
                   let vipPrefix = "";
@@ -140,9 +151,20 @@ router.get('/', function (req, res, next) {
                                 } )
                               );
                 })
-                .catch(err=> console.error(err));
-
+                .catch(err=> {
+						console.error(err)
+						
+						var vip = vipName[0]
+							res.send( JSON.stringify(
+                                { nick: vip.name,
+                                  person: vip.prefix + " " + vip.name
+                                } )
+                              );
+				});
+				
+						
   });
 
 
+//export reserveNick;
 module.exports = router;
