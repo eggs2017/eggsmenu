@@ -7,6 +7,8 @@ var logger = require('../libs/logger')
 
 const ldap = require('ldapjs');
 
+var hasLdap = false
+
 let vipName = [
   { name: 'gmacial' , prefix: 'Sz. Pan'}
 ];
@@ -122,7 +124,7 @@ router.get('/', function (req, res, next) {
           }
 
             //Promises
-
+			if(hasLdap){
             Promise.all(
             [
                 bindClient('ldap://ldap:389'),//prepare ldap client
@@ -132,14 +134,9 @@ router.get('/', function (req, res, next) {
 			
             .then(ret => {searchEntry(ret)}).catch( err=>{
 				console.error(err)
-				var vip = vipName[0]
-							res.send( JSON.stringify(
-                                { nick: vip.name,
-                                  person: vip.prefix + " " + vip.name
-                                } )
-                              );
 			})
             .then(ret => {
+				
                   let vipPerson =  findByPerson(vipName, this.nick);
                   let vipPrefix = "";
                   if(vipPerson.length > 0 )
@@ -150,17 +147,20 @@ router.get('/', function (req, res, next) {
                                   person: vipPrefix + " " + ret.firstName + " " + ret.lastName
                                 } )
                               );
+							  
+				
                 })
                 .catch(err=> {
 						console.error(err)
-						
-						var vip = vipName[0]
-							res.send( JSON.stringify(
-                                { nick: vip.name,
-                                  person: vip.prefix + " " + vip.name
+				});
+			}
+			else{
+				res.send( JSON.stringify(
+                                { nick: vipName[0].name,
+                                  person: vipName[0].prefix + " " + vipName[0].name
                                 } )
                               );
-				});
+			}
 				
 						
   });
